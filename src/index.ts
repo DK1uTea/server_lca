@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.config.js';
 import apiRouter from './routers/index.js';
 import { errorHandler } from './middlewares/error.middleware.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger.config.js';
 
 dotenv.config();
 
@@ -21,6 +23,9 @@ app.use(cors());
 
 // Routers
 app.use('/api', apiRouter);
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Error Handling Middleware
 
