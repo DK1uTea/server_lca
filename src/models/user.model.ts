@@ -27,6 +27,7 @@ const userSchema: Schema = new Schema({
     required: function (this: IUser) {
       return !this.uid;
     },
+    select: false,
   },
   uid: {
     type: String,
