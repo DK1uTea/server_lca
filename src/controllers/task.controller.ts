@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Task from "../models/task.model.js";
 import mongoose from 'mongoose';
+import { sendResponse } from '../utils/response.util.js';
 
 // Add new task
 export const addTask = async (req: Request, res: Response, next: NextFunction) => {
@@ -15,9 +16,9 @@ export const addTask = async (req: Request, res: Response, next: NextFunction) =
       priority
     });
     await newTask.save();
-    return res.status(201).json({
-      message: 'Task added successfully!',
-      task: newTask
+    return sendResponse(res, 201, {
+      data: newTask,
+      message: 'Task added successfully!'
     });
   } catch (error) {
     next(error);
@@ -46,7 +47,7 @@ export const getTask = async (req: Request, res: Response, next: NextFunction) =
       }
     }
 
-    return res.status(200).json(tasks);
+    return sendResponse(res, 200, { data: tasks, message: 'Get tasks successfully!' });
   } catch (error) {
     next(error);
   }
@@ -63,9 +64,9 @@ export const editTask = async (req: Request, res: Response, next: NextFunction) 
       { new: true }
     );
     if (!updatedTask) {
-      return res.status(404).json({ message: 'Task not found' });
+      return sendResponse(res, 404, { data: null, message: 'Task not found' });
     }
-    return res.status(200).json({ message: 'Updated task successfully', updatedTask });
+    return sendResponse(res, 200, { data: updatedTask, message: 'Updated task successfully' });
   } catch (error) {
     next(error);
   }
@@ -78,9 +79,9 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
   try {
     const deletedTask = await Task.findByIdAndDelete(taskId);
     if (!deletedTask) {
-      return res.status(404).json({ message: 'Task not found' });
+      return sendResponse(res, 404, { data: null, message: 'Task not found' });
     }
-    return res.status(200).json({ message: 'Task deleted successfully' });
+    return sendResponse(res, 200, { data: null, message: 'Task deleted successfully' });
   } catch (error) {
     next(error);
   }
@@ -93,14 +94,14 @@ export const markTaskAsCompleted = async (req: Request, res: Response, next: Nex
   try {
     const task = await Task.findById(taskId);
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
+      return sendResponse(res, 404, { data: null, message: 'Task not found' });
     }
     if (task.status === 'pending' || task.status === 'overdue') {
       task.status = 'completed';
       task.completedDate = new Date();
       await task.save();
     }
-    return res.status(200).json({ message: 'Task marked as completed', task });
+    return sendResponse(res, 200, { data: task, message: 'Task marked as completed' });
   } catch (error) {
     next(error);
   }
@@ -144,7 +145,7 @@ export const getTaskCompletionStatistic = async (req: Request, res: Response, ne
       return acc;
     }, {});
 
-    res.json(result);
+    return sendResponse(res, 200, { data: result, message: 'Get task completion statistics successfully!' });
   } catch (error) {
     next(error);
   }

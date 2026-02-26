@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Habit from '../models/habit.model.js';
 import { isSameDay, isSameWeek, isSameMonth, differenceInDays } from 'date-fns';
+import { sendResponse } from '../utils/response.util.js';
 
 export const addHabit = async (req: Request, res: Response, next: NextFunction) => {
   const { user, name, description, frequency, targetCount } = req.body;
@@ -14,10 +15,10 @@ export const addHabit = async (req: Request, res: Response, next: NextFunction) 
       targetCount
     });
     await newHabit.save();
-    return res.status(201).json({
-      message: 'Add habit successfully!',
-      habit: newHabit
-    })
+    return sendResponse(res, 201, {
+      data: newHabit,
+      message: 'Add habit successfully!'
+    });
   } catch (error) {
     next(error);
   }
@@ -40,9 +41,9 @@ export const getHabit = async (req: Request, res: Response, next: NextFunction) 
       return acc;
     }, { dailyHabits: [], weeklyHabits: [], monthlyHabits: [] });
 
-    return res.status(200).json({
-      message: 'Get habit successfully!',
-      ...habitCategories
+    return sendResponse(res, 200, {
+      data: habitCategories,
+      message: 'Get habit successfully!'
     });
   } catch (error) {
     next(error);
@@ -54,8 +55,8 @@ export const deleteHabit = async (req: Request, res: Response, next: NextFunctio
 
   try {
     const deletedHabit = await Habit.findByIdAndDelete(habitID);
-    if (!deletedHabit) return res.status(404).json({ message: 'Habit not found!' });
-    return res.status(200).json({ message: 'Habit deleted successfully!' });
+    if (!deletedHabit) return sendResponse(res, 404, { data: null, message: 'Habit not found!' });
+    return sendResponse(res, 200, { data: null, message: 'Habit deleted successfully!' });
   } catch (error) {
     next(error);
   }
@@ -71,10 +72,10 @@ export const editHabit = async (req: Request, res: Response, next: NextFunction)
       { name, description, frequency, targetCount },
       { new: true }
     );
-    if (!updatedHabit) return res.status(404).json({ message: 'Habit not found!' });
-    return res.status(200).json({
-      message: 'Update habit successfully!',
-      updatedHabit: updatedHabit
+    if (!updatedHabit) return sendResponse(res, 404, { data: null, message: 'Habit not found!' });
+    return sendResponse(res, 200, {
+      data: updatedHabit,
+      message: 'Update habit successfully!'
     });
   } catch (error) {
     next(error);
@@ -88,7 +89,7 @@ export const markHabitAsCompleted = async (req: Request, res: Response, next: Ne
   try {
     const habit = await Habit.findById(habitId);
     if (!habit) {
-      return res.status(404).json({ message: 'Habit not found!' });
+      return sendResponse(res, 404, { data: null, message: 'Habit not found!' });
     }
 
     const completedDates = habit.completedDates.map(d => d.toISOString().split('T')[0]);
@@ -97,7 +98,7 @@ export const markHabitAsCompleted = async (req: Request, res: Response, next: Ne
       await habit.save();
     }
 
-    return res.status(200).json({ updatedHabit: habit });
+    return sendResponse(res, 200, { data: habit, message: 'Mark habit as completed successfully!' });
   } catch (error) {
     next(error);
   }
@@ -108,7 +109,7 @@ export const getHabitCompletionStatistic = async (req: Request, res: Response, n
   try {
     const habits = await Habit.find({ user: userID });
     if (!habits.length) {
-      return res.json([]);
+      return sendResponse(res, 200, { data: [], message: 'No habits found' });
     }
 
     const today = new Date();
@@ -141,7 +142,7 @@ export const getHabitCompletionStatistic = async (req: Request, res: Response, n
         completionRate: Math.min(completionRate, 100),
       };
     });
-    return res.json(stats);
+    return sendResponse(res, 200, { data: stats, message: 'Get habit completion statistics successfully!' });
   } catch (error) {
     next(error);
   }
