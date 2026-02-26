@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Transaction from "../models/transaction.model.js";
 import mongoose from "mongoose";
+import { sendResponse } from '../utils/response.util.js';
 
 // add transaction to DB
 export const addTransaction = async (req: Request, res: Response, next: NextFunction) => {
@@ -15,9 +16,9 @@ export const addTransaction = async (req: Request, res: Response, next: NextFunc
       description
     });
     await newTransaction.save();
-    return res.status(201).json({
-      message: 'Add transaction successfully!',
-      transaction: newTransaction
+    return sendResponse(res, 201, {
+      data: newTransaction,
+      message: 'Add transaction successfully!'
     });
 
   } catch (error) {
@@ -30,7 +31,7 @@ export const getTransactionByDay = async (req: Request, res: Response, next: Nex
   const { userID, day } = req.query;
 
   if (!userID || !day) {
-    return res.status(400).json({ message: "userID and day are required query parameters" });
+    return sendResponse(res, 400, { data: null, message: "userID and day are required query parameters" });
   }
 
   try {
@@ -46,9 +47,9 @@ export const getTransactionByDay = async (req: Request, res: Response, next: Nex
       }
     });
 
-    return res.status(200).json({
-      message: 'Transactions retrieved successfully!',
-      transactions: transactions
+    return sendResponse(res, 200, {
+      data: transactions,
+      message: 'Transactions retrieved successfully!'
     });
 
   } catch (error) {
@@ -63,9 +64,9 @@ export const deleteTransaction = async (req: Request, res: Response, next: NextF
   try {
     const deletedTransaction = await Transaction.findByIdAndDelete(transactionID);
     if (!deletedTransaction) {
-      return res.status(404).json({ message: 'Transaction not found!' });
+      return sendResponse(res, 404, { data: null, message: 'Transaction not found!' });
     }
-    return res.status(200).json({ message: `Transaction deleted successfully!` });
+    return sendResponse(res, 200, { data: null, message: `Transaction deleted successfully!` });
   } catch (error) {
     next(error);
   }
@@ -82,9 +83,9 @@ export const editTransaction = async (req: Request, res: Response, next: NextFun
       { new: true }
     );
     if (!updatedTransaction) {
-      return res.status(404).json({ message: 'Transaction not found' });
+      return sendResponse(res, 404, { data: null, message: 'Transaction not found' });
     }
-    return res.status(200).json({ message: 'Update transaction successfully!', updatedTransaction });
+    return sendResponse(res, 200, { data: updatedTransaction, message: 'Update transaction successfully!' });
   } catch (error) {
     next(error);
   }
@@ -155,7 +156,7 @@ export const getConsumptionStatistics = async (req: Request, res: Response, next
       }
     });
 
-    return res.json({ categoryData, monthlyData });
+    return sendResponse(res, 200, { data: { categoryData, monthlyData }, message: 'Get consumption statistics successfully!' });
   } catch (error) {
     next(error);
   }

@@ -87,6 +87,8 @@
  *     responses:
  *       200:
  *         description: Updated task successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Task not found
  */
@@ -106,6 +108,8 @@
  *     responses:
  *       200:
  *         description: Task deleted successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Task not found
  */
@@ -144,4 +148,6 @@
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  */

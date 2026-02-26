@@ -14,9 +14,10 @@ export const errorHandler = (err: AppError, req: Request, res: Response, next: N
   }
 
   res.status(statusCode).json({
-    success: false,
-    status: statusCode,
+    data: null,
     message: message,
+    status: 'error',
+    timestamp: new Date().toISOString(),
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   });
 };

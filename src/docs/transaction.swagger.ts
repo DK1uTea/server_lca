@@ -37,6 +37,8 @@
  *     responses:
  *       201:
  *         description: Add transaction successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  */
 
 /**
@@ -61,6 +63,8 @@
  *     responses:
  *       200:
  *         description: Transactions retrieved successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       400:
  *         description: userID and day are required
  */
@@ -80,6 +84,8 @@
  *     responses:
  *       200:
  *         description: Transaction deleted successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Transaction not found
  */
@@ -115,6 +121,8 @@
  *     responses:
  *       200:
  *         description: Update transaction successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Transaction not found
  */
@@ -134,4 +142,6 @@
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  */

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/user.model.js';
+import { sendResponse } from '../utils/response.util.js';
 
 // Get user profile
 export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
@@ -8,9 +9,14 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   try {
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ message: 'User not found!' });
+      return sendResponse(res, 404, { data: null, message: 'User not found!' });
     }
-    return res.status(200).json(user);
+
+    // Convert to plain object to handle any post-processing if needed
+    const userData = user.toObject();
+    delete userData.password;
+
+    return sendResponse(res, 200, { data: userData, message: 'Get profile success' });
   } catch (error) {
     next(error);
   }

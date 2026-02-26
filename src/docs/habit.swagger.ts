@@ -20,6 +20,8 @@
  *     responses:
  *       200:
  *         description: Get habits successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  */
 
 /**
@@ -53,6 +55,8 @@
  *     responses:
  *       201:
  *         description: Add habit successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  */
 
 /**
@@ -70,6 +74,8 @@
  *     responses:
  *       200:
  *         description: Habit deleted successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Habit not found
  */
@@ -105,6 +111,8 @@
  *     responses:
  *       200:
  *         description: Update habit successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Habit not found
  */
@@ -137,6 +145,8 @@
  *     responses:
  *       200:
  *         description: Habit updated successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Habit not found
  */
@@ -156,4 +166,6 @@
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
  */
