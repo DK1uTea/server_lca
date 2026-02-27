@@ -2,7 +2,7 @@ import Habit from '../../models/habit.model.js';
 import { isSameDay, isSameWeek, isSameMonth, differenceInDays } from 'date-fns';
 
 export const getHabitStatsService = async (userID: string) => {
-  const habits = await Habit.find({ user: userID });
+  const habits = await Habit.find({ userId: userID });
   if (!habits.length) return [];
 
   const today = new Date();

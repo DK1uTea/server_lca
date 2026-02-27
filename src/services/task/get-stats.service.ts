@@ -3,7 +3,7 @@ import Task from '../../models/task.model.js';
 
 export const getTaskStatsService = async (userID: string) => {
   const stats = await Task.aggregate([
-    { $match: { user: new mongoose.Types.ObjectId(userID) } },
+    { $match: { userId: new mongoose.Types.ObjectId(userID) } },
     {
       $group: {
         _id: {

@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-interface ResponseData<T> {
+export interface ResponseData<T> {
   data: T | null;
   message: string;
   status?: string;

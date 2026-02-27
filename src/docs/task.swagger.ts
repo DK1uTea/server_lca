@@ -18,11 +18,8 @@
  *           schema:
  *             type: object
  *             required:
- *               - user
  *               - title
  *             properties:
- *               user:
- *                 type: string
  *               title:
  *                 type: string
  *               description:
@@ -40,16 +37,52 @@
 
 /**
  * @swagger
- * /tasks/user/{userID}:
+ * /tasks:
  *   get:
- *     summary: Get all tasks for a user
+ *     summary: Get all tasks for the authenticated user
  *     tags: [Tasks]
  *     parameters:
- *       - in: path
- *         name: userID
- *         required: true
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of tasks per page
+ *       - in: query
+ *         name: sort
  *         schema:
  *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *         description: Sort order
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [title, dueDate, completedDate, createdAt]
+ *           default: createdAt
+ *         description: Field to sort by
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for task title
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *         description: Comma-separated list of priorities (e.g., "low,high")
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Comma-separated list of statuses (e.g., "pending,completed")
  *     responses:
  *       200:
  *         description: Tasks retrieved successfully
@@ -135,16 +168,10 @@
 
 /**
  * @swagger
- * /tasks/stats/{userID}:
+ * /tasks/stats:
  *   get:
- *     summary: Get task completion statistics for a user
+ *     summary: Get task completion statistics for the authenticated user
  *     tags: [Tasks]
- *     parameters:
- *       - in: path
- *         name: userID
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully

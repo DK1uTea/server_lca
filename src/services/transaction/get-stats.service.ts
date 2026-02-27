@@ -7,7 +7,7 @@ export const getConsumptionStatsService = async (userID: string) => {
   const endYear = new Date(currentYear, 11, 31, 23, 59, 59);
 
   const categoryStats = await Transaction.aggregate([
-    { $match: { user: new mongoose.Types.ObjectId(userID) } },
+    { $match: { userId: new mongoose.Types.ObjectId(userID) } },
     {
       $group: {
         _id: { type: '$type', category: '$category' },
@@ -17,7 +17,7 @@ export const getConsumptionStatsService = async (userID: string) => {
   ]);
 
   const monthlyStats = await Transaction.aggregate([
-    { $match: { user: new mongoose.Types.ObjectId(userID), createdAt: { $gte: startYear, $lte: endYear } } },
+    { $match: { userId: new mongoose.Types.ObjectId(userID), createdAt: { $gte: startYear, $lte: endYear } } },
     {
       $group: {
         _id: {

@@ -7,17 +7,10 @@
 
 /**
  * @swagger
- * /users/profile/{id}:
+ * /users/profile:
  *   get:
- *     summary: Get user profile by ID
+ *     summary: Get profile for the authenticated user
  *     tags: [Users]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID
  *     responses:
  *       200:
  *         description: User profile retrieved successfully
@@ -25,6 +18,40 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized - Token required or invalid
+ *       404:
+ *         description: User not found
+ */
+
+/**
+ * @swagger
+ * /users/profile:
+ *   patch:
+ *     summary: Update profile for the authenticated user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female]
+ *               description:
+ *                 type: string
+ *               avatar:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
  *       401:
  *         description: Unauthorized - Token required or invalid
  *       404:
