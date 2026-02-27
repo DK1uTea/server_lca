@@ -1,7 +1,7 @@
 import Task from '../../models/task.model.js';
 
-export const markTaskAsCompletedService = async (taskId: string) => {
-  const task = await Task.findById(taskId);
+export const markTaskAsCompletedService = async (taskId: string, userId: string) => {
+  const task = await Task.findOne({ _id: taskId, userId });
   if (!task) return null;
 
   if (task.status === 'pending' || task.status === 'overdue') {

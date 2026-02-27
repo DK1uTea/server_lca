@@ -6,11 +6,11 @@ import { UpdateProfileRes } from '../../types/user/update-profile/update-profile
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
 
 export const updateProfile = async (
-  req: AuthRequest<{ id: string }, any, UpdateProfileReq>,
+  req: AuthRequest<any, any, UpdateProfileReq>,
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params;
+  const id = req.user?._id as string;
 
   try {
     const updatedUser = await updateProfileService(id, req.body);

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITask extends Document {
-  user: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   title: string;
   description?: string;
   dueDate?: Date;
@@ -12,7 +12,7 @@ export interface ITask extends Document {
 }
 
 const taskSchema: Schema = new Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,

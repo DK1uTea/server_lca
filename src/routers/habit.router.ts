@@ -8,11 +8,11 @@ import { getHabitCompletionStatistic } from '../controllers/habit/get-stats.cont
 
 const router = express.Router();
 
-router.get('/user/:userID', getHabit);
+router.get('/', getHabit);
 router.post('/', addHabit);
 router.delete('/:id', deleteHabit);
 router.put('/:id', editHabit);
 router.patch('/:id/complete', markHabitAsCompleted);
-router.get('/stats/:userID', getHabitCompletionStatistic);
+router.get('/stats', getHabitCompletionStatistic);
 
 export default router;

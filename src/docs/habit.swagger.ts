@@ -7,19 +7,108 @@
 
 /**
  * @swagger
- * /habits/user/{userID}:
+ * /habits:
  *   get:
- *     summary: Get all habits for a user
+ *     summary: Get all habits for the authenticated user
  *     tags: [Habits]
  *     parameters:
- *       - in: path
- *         name: userID
- *         required: true
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
  *         schema:
  *           type: string
+ *         description: Search habits by name (case-insensitive)
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [name, createdAt]
+ *           default: createdAt
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *         description: Sort order
+ *       - in: query
+ *         name: frequency
+ *         schema:
+ *           type: string
+ *         description: Filter by frequency (comma-separated values - daily,weekly,monthly)
+ *         example: "daily,weekly"
  *     responses:
  *       200:
  *         description: Get habits successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     habits:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           userId:
+ *                             type: string
+ *                           name:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           frequency:
+ *                             type: string
+ *                             enum: [daily, weekly, monthly]
+ *                           targetCount:
+ *                             type: number
+ *                           completedDates:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                               format: date
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                         limit:
+ *                           type: integer
+ *                         total:
+ *                           type: integer
+ *                         totalPage:
+ *                           type: integer
+ *                 message:
+ *                   type: string
+ *                   example: "Get habits successfully!"
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
  *       401:
  *         description: Unauthorized - Token required or invalid
  */
@@ -37,12 +126,9 @@
  *           schema:
  *             type: object
  *             required:
- *               - user
  *               - name
  *               - frequency
  *             properties:
- *               user:
- *                 type: string
  *               name:
  *                 type: string
  *               description:
@@ -153,16 +239,10 @@
 
 /**
  * @swagger
- * /habits/stats/{userID}:
+ * /habits/stats:
  *   get:
- *     summary: Get habit completion statistics for a user
+ *     summary: Get habit completion statistics for the authenticated user
  *     tags: [Habits]
- *     parameters:
- *       - in: path
- *         name: userID
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully

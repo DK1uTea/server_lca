@@ -4,12 +4,14 @@ import { getProfileService } from '../../services/user/get-profile.service.js';
 import { GetProfileReq } from '../../types/user/get-profile/get-profile.request.js';
 import { GetProfileRes } from '../../types/user/get-profile/get-profile.response.js';
 
+import { AuthRequest } from '../../middlewares/auth.middleware.js';
+
 export const getProfile = async (
-  req: Request<GetProfileReq>,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params;
+  const id = req.user?._id as string;
 
   try {
     const userData = await getProfileService(id);

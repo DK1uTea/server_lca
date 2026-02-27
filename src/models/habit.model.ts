@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IHabit extends Document {
-  user: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   name: string;
   description?: string;
   frequency: 'daily' | 'weekly' | 'monthly';
@@ -11,7 +11,7 @@ export interface IHabit extends Document {
 }
 
 const habitSchema: Schema = new Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
