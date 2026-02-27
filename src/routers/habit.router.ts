@@ -1,5 +1,10 @@
 import express from 'express';
-import { addHabit, getHabit, deleteHabit, editHabit, markHabitAsCompleted, getHabitCompletionStatistic } from '../controllers/habit.controller.js';
+import { getHabit } from '../controllers/habit/get-habit.controller.js';
+import { addHabit } from '../controllers/habit/add-habit.controller.js';
+import { editHabit } from '../controllers/habit/edit-habit.controller.js';
+import { deleteHabit } from '../controllers/habit/delete-habit.controller.js';
+import { markHabitAsCompleted } from '../controllers/habit/mark-completed.controller.js';
+import { getHabitCompletionStatistic } from '../controllers/habit/get-stats.controller.js';
 
 const router = express.Router();
 

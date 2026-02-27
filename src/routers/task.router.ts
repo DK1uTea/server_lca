@@ -1,5 +1,10 @@
 import express from 'express';
-import { getTask, addTask, editTask, deleteTask, markTaskAsCompleted, getTaskCompletionStatistic } from '../controllers/task.controller.js';
+import { getTask } from '../controllers/task/get-task.controller.js';
+import { addTask } from '../controllers/task/add-task.controller.js';
+import { editTask } from '../controllers/task/edit-task.controller.js';
+import { deleteTask } from '../controllers/task/delete-task.controller.js';
+import { markTaskAsCompleted } from '../controllers/task/mark-completed.controller.js';
+import { getTaskCompletionStatistic } from '../controllers/task/get-stats.controller.js';
 
 const router = express.Router();
 

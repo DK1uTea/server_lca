@@ -3,10 +3,24 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IUser extends Document {
   username?: string;
   email: string;
+  dateOfBirth?: Date;
+  gender?: Gender;
+  description?: string;
+  avatar?: string;
   password?: string;
   uid?: string;
-  provider: 'local' | 'google';
+  provider: Provider;
   createdAt: Date;
+}
+
+export enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+}
+
+export enum Provider {
+  LOCAL = 'local',
+  GOOGLE = 'google',
 }
 
 const userSchema: Schema = new Schema({
@@ -22,6 +36,22 @@ const userSchema: Schema = new Schema({
     unique: true,
     trim: true,
   },
+  dateOfBirth: {
+    type: Date,
+  },
+  gender: {
+    type: String,
+    enum: [Gender.MALE, Gender.FEMALE],
+    default: Gender.MALE,
+  },
+  description: {
+    type: String,
+    default: '',
+  },
+  avatar: {
+    type: String,
+    default: '',
+  },
   password: {
     type: String,
     required: function (this: IUser) {
@@ -36,8 +66,8 @@ const userSchema: Schema = new Schema({
   },
   provider: {
     type: String,
-    enum: ['local', 'google'],
-    default: 'local',
+    enum: [Provider.LOCAL, Provider.GOOGLE],
+    default: Provider.LOCAL,
   },
   createdAt: {
     type: Date,
