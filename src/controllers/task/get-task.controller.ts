@@ -2,16 +2,12 @@ import { Response, NextFunction } from 'express';
 import { sendResponse } from '../../utils/response.util.js';
 import { getTasksService } from '../../services/task/get-tasks.service.js';
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
+import { PaginationType, SortType, SearchType } from '../../types/query_types.js';
 
 export type GetTaskParams = {
 }
 
-export type GetTaskQuery = {
-  page?: number;
-  limit?: number;
-  sort?: 'asc' | 'desc';
-  sortBy?: string;
-  search?: string;
+export type GetTaskQuery = PaginationType & SortType & SearchType & {
   priority?: string; // e.g. "low,high"
   status?: string;   // e.g. "pending,completed"
 }

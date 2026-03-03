@@ -5,10 +5,12 @@ import { editHabit } from '../controllers/habit/edit-habit.controller.js';
 import { deleteHabit } from '../controllers/habit/delete-habit.controller.js';
 import { markHabitAsCompleted } from '../controllers/habit/mark-completed.controller.js';
 import { getHabitCompletionStatistic } from '../controllers/habit/get-stats.controller.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { getHabitsSchema } from '../validations/habit.validation.js';
 
 const router = express.Router();
 
-router.get('/', getHabit);
+router.get('/', validate(getHabitsSchema),getHabit);
 router.post('/', addHabit);
 router.delete('/:id', deleteHabit);
 router.put('/:id', editHabit);

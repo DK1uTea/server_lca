@@ -4,12 +4,14 @@ import { deleteTransaction } from '../controllers/transaction/delete.controller.
 import { editTransaction } from '../controllers/transaction/edit.controller.js';
 import { getConsumptionStatistics } from '../controllers/transaction/get-stats.controller.js';
 import { getTransactions } from '../controllers/transaction/get-transactions.controller.js';
+import { getTransactionsSchema } from '../validations/transaction.validation.js';
+import { validate } from '../middlewares/validate.middleware.js';
 
 
 const router = express.Router();
 
 router.post('/', addTransaction);
-router.get('/', getTransactions);
+router.get('/', validate(getTransactionsSchema), getTransactions);
 router.delete('/:id', deleteTransaction);
 router.put('/:id', editTransaction);
 router.get('/stats', getConsumptionStatistics);
