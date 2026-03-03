@@ -3,10 +3,9 @@ import { sendResponse } from '../../utils/response.util.js';
 
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
 import { getTransactionsService } from '../../services/transaction/get-transactions.service.js';
+import { PaginationType } from '../../types/query_types.js';
 
-export type getTransactionsQuery = {
-  page?: number;
-  limit?: number;
+export type getTransactionsQuery = PaginationType &  {
   type?: string; // e.g. "Income,Expense"
   createdDate?: string; // e.g. "2024-01-01"
 }

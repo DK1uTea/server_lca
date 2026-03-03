@@ -1,15 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { sendResponse } from '../../utils/response.util.js';
 import { getHabitsService } from '../../services/habit/get-habits.service.js';
 
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
+import { PaginationType, SortType, SearchType } from '../../types/query_types.js';
 
-export type GetHabitQuery = {
-  page?: number;
-  limit?: number;
-  sort?: 'asc' | 'desc';
-  sortBy?: string;
-  search?: string;
+export type GetHabitQuery = PaginationType & SortType & SearchType & {
   frequency?: string; // e.g. "daily,weekly,monthly"
 }
 
