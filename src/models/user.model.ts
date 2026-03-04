@@ -10,6 +10,7 @@ export interface IUser extends Document {
   password?: string;
   uid?: string;
   provider: Provider;
+  timezone: string;
   createdAt: Date;
 }
 
@@ -68,6 +69,10 @@ const userSchema: Schema = new Schema({
     type: String,
     enum: [Provider.LOCAL, Provider.GOOGLE],
     default: Provider.LOCAL,
+  },
+  timezone: {
+    type: String,
+    default: 'UTC',
   },
   createdAt: {
     type: Date,
