@@ -6,17 +6,18 @@ import { deleteTask } from '../controllers/task/delete-task.controller.js';
 import { markTaskAsCompleted } from '../controllers/task/mark-completed.controller.js';
 import { getTaskCompletionStatistic } from '../controllers/task/get-stats.controller.js';
 
-import { getTasksSchema } from '../validations/task.validation.js';
+import { addTaskSchema, getTasksSchema } from '../validations/task.validation.js';
 import { validate } from '../middlewares/validate.middleware.js';
+import { getStatsSchema } from '../validations/query.validation.js';
 
 
 const router = express.Router();
 
-router.post('/', addTask);
+router.post('/', validate(addTaskSchema), addTask);
 router.get('/', validate(getTasksSchema), getTask);
 router.put('/:id', editTask);
 router.delete('/:id', deleteTask);
 router.patch('/:id/complete', markTaskAsCompleted);
-router.get('/stats', getTaskCompletionStatistic);
+router.get('/stats', validate(getStatsSchema), getTaskCompletionStatistic);
 
 export default router;

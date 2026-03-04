@@ -10,7 +10,7 @@ export const addTask = async (
   next: NextFunction
 ) => {
   try {
-    const newTask = await addTaskService({ ...req.body, userId: req.user?._id as string });
+    const newTask = await addTaskService(req.body, req.user?._id as string);
     return sendResponse(res, 201, {
       data: newTask,
       message: 'Task added successfully!'

@@ -4,9 +4,16 @@ import { getTaskStatsService } from '../../services/task/get-stats.service.js';
 
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
 
-export const getTaskCompletionStatistic = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export type GetTaskStatsQuery = {
+  period: 'weekly' | 'monthly'
+}
+
+export const getTaskCompletionStatistic = async (
+  req: AuthRequest<any, any, any, GetTaskStatsQuery>,
+  res: Response,
+  next: NextFunction) => {
   try {
-    const result = await getTaskStatsService(req.user?._id as string);
+    const result = await getTaskStatsService(req.user?._id as string, req.query);
     return sendResponse(res, 200, { data: result, message: 'Get task completion statistics successfully!' });
   } catch (error) {
     next(error);

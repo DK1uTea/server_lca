@@ -7,14 +7,15 @@ import { markHabitAsCompleted } from '../controllers/habit/mark-completed.contro
 import { getHabitCompletionStatistic } from '../controllers/habit/get-stats.controller.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import { getHabitsSchema } from '../validations/habit.validation.js';
+import { getStatsSchema } from '../validations/query.validation.js';
 
 const router = express.Router();
 
-router.get('/', validate(getHabitsSchema),getHabit);
+router.get('/', validate(getHabitsSchema), getHabit);
 router.post('/', addHabit);
 router.delete('/:id', deleteHabit);
 router.put('/:id', editHabit);
 router.patch('/:id/complete', markHabitAsCompleted);
-router.get('/stats', getHabitCompletionStatistic);
+router.get('/stats', validate(getStatsSchema), getHabitCompletionStatistic);
 
 export default router;

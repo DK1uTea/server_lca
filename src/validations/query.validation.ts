@@ -29,3 +29,11 @@ export const sortSchema = z.object({
 export const searchSchema = z.object({
   search: z.string({ message: 'Search must be a string' }).optional(),
 });
+
+export const getStatsSchema = z.object({
+  query: z.object({
+    period: z.enum(['weekly', 'monthly'], {
+      message: "Period must be 'weekly' or 'monthly'",
+    }).optional().default('weekly'),
+  }).strict(),
+});

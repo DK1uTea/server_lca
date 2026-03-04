@@ -67,8 +67,6 @@
  *                         properties:
  *                           _id:
  *                             type: string
- *                           userId:
- *                             type: string
  *                           name:
  *                             type: string
  *                           description:
@@ -243,9 +241,42 @@
  *   get:
  *     summary: Get habit completion statistics for the authenticated user
  *     tags: [Habits]
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [weekly, monthly]
+ *           default: weekly
+ *         description: Period for statistics
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                       completed:
+ *                         type: integer
+ *                       pending:
+ *                         type: integer
+ *                       total:
+ *                         type: integer
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Get habit statistics successfully!"
  *       401:
  *         description: Unauthorized - Token required or invalid
  */

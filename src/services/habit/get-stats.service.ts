@@ -1,38 +1,89 @@
+import mongoose from 'mongoose';
+import {
+  format,
+  startOfWeek,
+  startOfMonth,
+  addWeeks,
+  addMonths,
+  isSameDay
+} from 'date-fns';
+
 import Habit from '../../models/habit.model.js';
-import { isSameDay, isSameWeek, isSameMonth, differenceInDays } from 'date-fns';
 
-export const getHabitStatsService = async (userID: string) => {
-  const habits = await Habit.find({ userId: userID });
-  if (!habits.length) return [];
+export type GetHabitStatsQuery = {
+  period: 'weekly' | 'monthly'
+}
 
-  const today = new Date();
-  return habits.map(habit => {
-    const { name, frequency, targetCount, completedDates, createdAt } = habit;
+export const getHabitStatsService = async (
+  userID: string,
+  query: GetHabitStatsQuery
+) => {
+  const { period } = query;
+  const now = new Date();
 
-    let completionRate = 0;
-    const completedCount = completedDates.filter(date => {
-      const completedDate = new Date(date);
-      if (frequency === 'daily') {
-        return isSameDay(completedDate, today);
-      } else if (frequency === 'weekly') {
-        return isSameWeek(completedDate, today, { weekStartsOn: 1 });
-      } else if (frequency === 'monthly') {
-        return isSameMonth(completedDate, today);
-      }
-      return false;
-    }).length;
+  let startDate: Date;
+  let endDate: Date;
 
-    if (frequency === 'daily') {
-      const daysElapsed = differenceInDays(today, new Date(createdAt)) + 1;
-      completionRate = (completedCount / daysElapsed) * 100;
-    } else {
-      completionRate = (completedCount / targetCount) * 100;
+  switch (period) {
+    case 'weekly': {
+      startDate = startOfWeek(now, { weekStartsOn: 1 }); // Monday
+      endDate = addWeeks(startDate, 1);
+      break;
     }
 
-    return {
-      habitName: name,
-      frequency,
-      completionRate: Math.min(completionRate, 100),
-    };
+    case 'monthly': {
+      startDate = startOfMonth(now);
+      endDate = addMonths(startDate, 1);
+      break;
+    }
+
+    default: {
+      startDate = startOfWeek(now, { weekStartsOn: 1 });
+      endDate = addWeeks(startDate, 1);
+      break;
+    }
+  }
+
+  const habits = await Habit.find({
+    userId: new mongoose.Types.ObjectId(userID)
+  }).lean();
+
+  const statsByDate = new Map<
+    string,
+    { completed: number; pending: number; total: number }
+  >();
+
+  // Initialize the map with all dates in the range
+  let currentDate = new Date(startDate);
+  while (currentDate < endDate) {
+    const dateStr = format(currentDate, 'yyyy-MM-dd');
+    statsByDate.set(dateStr, {
+      completed: 0,
+      pending: 0,
+      total: habits.length
+    });
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  for (const habit of habits) {
+    for (const completedDate of habit.completedDates) {
+      const dateStr = format(new Date(completedDate), 'yyyy-MM-dd');
+      if (statsByDate.has(dateStr)) {
+        const stats = statsByDate.get(dateStr)!;
+        stats.completed += 1;
+      }
+    }
+  }
+
+  // Calculate pending for each date
+  statsByDate.forEach((stats) => {
+    stats.pending = stats.total - stats.completed;
   });
+
+  return Array.from(statsByDate.entries())
+    .map(([date, stats]) => ({
+      date,
+      ...stats
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 };

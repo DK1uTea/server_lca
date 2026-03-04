@@ -4,9 +4,24 @@ import { addTransactionService } from '../../services/transaction/add-transactio
 
 import { AuthRequest } from '../../middlewares/auth.middleware.js';
 
-export const addTransaction = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export type AddTransactionReq = {
+  type: 'income' | 'expense';
+  amount: number;
+  category: string;
+  description?: string;
+}
+
+export const addTransaction = async (
+  req: AuthRequest<
+    any,
+    any,
+    AddTransactionReq,
+    any
+  >,
+  res: Response,
+  next: NextFunction) => {
   try {
-    const newTransaction = await addTransactionService({ ...req.body, userId: req.user?._id });
+    const newTransaction = await addTransactionService(req.body, req.user?._id as string);
     return sendResponse(res, 201, {
       data: newTransaction,
       message: 'Add transaction successfully!'
