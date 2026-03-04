@@ -8,6 +8,8 @@ export const markTaskAsCompletedService = async (taskId: string, userId: string)
     task.status = 'completed';
     task.completedDate = new Date();
     await task.save();
+  } else if (task.status === 'completed') {
+    return task;
   }
   return task;
 };

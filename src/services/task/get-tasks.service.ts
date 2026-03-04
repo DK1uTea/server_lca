@@ -46,7 +46,8 @@ export const getTasksService = async (userID: string, query: GetTaskQuery) => {
   const tasks = await Task.find(searchQuery)
     .sort({ [sortField as string]: sortOrder })
     .skip(skip)
-    .limit(limitNum);
+    .limit(limitNum)
+    .lean();
 
   const total = await Task.countDocuments(searchQuery);
 

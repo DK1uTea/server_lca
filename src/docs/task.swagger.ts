@@ -86,6 +86,60 @@
  *     responses:
  *       200:
  *         description: Tasks retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     tasks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           title:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           dueDate:
+ *                             type: string
+ *                             format: date-time
+ *                           priority:
+ *                             type: string
+ *                             enum: [low, medium, high]
+ *                           status:
+ *                             type: string
+ *                             enum: [pending, completed, overdue]
+ *                           completedDate:
+ *                             type: string
+ *                             format: date-time
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                     pagination:
+ *                       type: object
+ *                       properties:
+ *                         page:
+ *                           type: integer
+ *                         limit:
+ *                           type: integer
+ *                         total:
+ *                           type: integer
+ *                         totalPage:
+ *                           type: integer
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Get tasks successfully!"
  */
 
 /**
@@ -172,9 +226,44 @@
  *   get:
  *     summary: Get task completion statistics for the authenticated user
  *     tags: [Tasks]
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [weekly, monthly]
+ *           default: weekly
+ *         description: Period for statistics
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                       pending:
+ *                         type: integer
+ *                       completed:
+ *                         type: integer
+ *                       overdue:
+ *                         type: integer
+ *                       total:
+ *                         type: integer
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Get task statistics successfully!"
  *       401:
  *         description: Unauthorized - Token required or invalid
  */

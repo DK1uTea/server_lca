@@ -15,6 +15,7 @@ const habitSchema: Schema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+    select: false,
   },
   name: {
     type: String,

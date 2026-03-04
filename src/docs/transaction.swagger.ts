@@ -88,8 +88,6 @@
  *                         properties:
  *                           _id:
  *                             type: string
- *                           userId:
- *                             type: string
  *                           type:
  *                             type: string
  *                             enum: [Income, Expense]
@@ -193,9 +191,42 @@
  *   get:
  *     summary: Get consumption statistics for the authenticated user
  *     tags: [Transactions]
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [weekly, monthly]
+ *           default: weekly
+ *         description: Period for statistics
  *     responses:
  *       200:
  *         description: Statistics retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                       income:
+ *                         type: number
+ *                       expense:
+ *                         type: number
+ *                       total:
+ *                         type: number
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Get transaction statistics successfully!"
  *       401:
  *         description: Unauthorized - Token required or invalid
  */
