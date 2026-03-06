@@ -1,55 +1,28 @@
 import mongoose from 'mongoose';
-import {
-  format,
-  startOfWeek,
-  startOfMonth,
-  addWeeks,
-  addMonths,
-  isBefore
-} from 'date-fns';
+import { isBefore } from 'date-fns';
 
 import Task from '../../models/task.model.js';
+import User from '../../models/user.model.js';
 import { GetTaskStatsQuery } from '../../controllers/task/get-stats.controller.js';
+import { getPeriodRange, formatZonedDate } from '../../utils/date.util.js';
 
 export const getTaskStatsService = async (
   userID: string,
   query: GetTaskStatsQuery
 ) => {
   const { period } = query;
+
+  // Fetch user timezone
+  const user = await User.findById(userID).select('timezone').lean();
+  const timezone = user?.timezone || 'UTC';
+
   const now = new Date();
+  const { startDate, endDate } = getPeriodRange(now, period, timezone);
 
-  let startDate: Date;
-  let endDate: Date | null = null;
-
-  switch (period) {
-    case 'weekly': {
-      startDate = startOfWeek(now, { weekStartsOn: 1 }); // Monday
-      endDate = addWeeks(startDate, 1);
-      break;
-    }
-
-    case 'monthly': {
-      startDate = startOfMonth(now);
-      endDate = addMonths(startDate, 1);
-      break;
-    }
-
-    default: {
-      startDate = startOfWeek(now, { weekStartsOn: 1 });
-      endDate = addWeeks(startDate, 1);
-      break;
-    }
-  }
-
-  const dateFilter: any = { $gte: startDate };
-
-  if (endDate) {
-    dateFilter.$lt = endDate;
-  }
 
   const tasks = await Task.find({
-    userID: new mongoose.Types.ObjectId(userID),
-    createdAt: dateFilter
+    userId: new mongoose.Types.ObjectId(userID),
+    createdAt: { $gte: startDate, $lt: endDate }
   }).lean();
 
   const statsByDate = new Map<
@@ -57,8 +30,11 @@ export const getTaskStatsService = async (
     { pending: number; completed: number; overdue: number }
   >();
 
+  // Optional: Pre-fill the map with all dates in range?
+  // For tasks it wasn't done before, so I'll keep the current behavior but fix the timezone grouping.
+
   for (const task of tasks) {
-    const dateStr = format(task.createdAt, 'yyyy-MM-dd');
+    const dateStr = formatZonedDate(task.createdAt, 'yyyy-MM-dd', timezone);
 
     if (!statsByDate.has(dateStr)) {
       statsByDate.set(dateStr, {

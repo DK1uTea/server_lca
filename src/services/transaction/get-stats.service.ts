@@ -1,13 +1,8 @@
 import mongoose from 'mongoose';
-import {
-  format,
-  startOfWeek,
-  startOfMonth,
-  addWeeks,
-  addMonths
-} from 'date-fns';
-
 import Transaction from '../../models/transaction.model.js';
+import User from '../../models/user.model.js';
+import { getPeriodRange, formatZonedDate } from '../../utils/date.util.js';
+import { TZDate } from '@date-fns/tz';
 
 export type GetTransactionStatsQuery = {
   period: 'weekly' | 'monthly'
@@ -18,30 +13,13 @@ export const getConsumptionStatsService = async (
   query: GetTransactionStatsQuery
 ) => {
   const { period } = query;
+
+  // Fetch user timezone
+  const user = await User.findById(userID).select('timezone').lean();
+  const timezone = user?.timezone || 'UTC';
+
   const now = new Date();
-
-  let startDate: Date;
-  let endDate: Date;
-
-  switch (period) {
-    case 'weekly': {
-      startDate = startOfWeek(now, { weekStartsOn: 1 }); // Monday
-      endDate = addWeeks(startDate, 1);
-      break;
-    }
-
-    case 'monthly': {
-      startDate = startOfMonth(now);
-      endDate = addMonths(startDate, 1);
-      break;
-    }
-
-    default: {
-      startDate = startOfWeek(now, { weekStartsOn: 1 });
-      endDate = addWeeks(startDate, 1);
-      break;
-    }
-  }
+  const { startDate, endDate } = getPeriodRange(now, period, timezone);
 
   const transactions = await Transaction.find({
     userId: new mongoose.Types.ObjectId(userID),
@@ -54,9 +32,9 @@ export const getConsumptionStatsService = async (
   >();
 
   // Initialize the map with all dates in the range
-  let currentDate = new Date(startDate);
+  let currentDate = new TZDate(startDate, timezone);
   while (currentDate < endDate) {
-    const dateStr = format(currentDate, 'yyyy-MM-dd');
+    const dateStr = formatZonedDate(currentDate, 'yyyy-MM-dd', timezone);
     statsByDate.set(dateStr, {
       income: 0,
       expense: 0,
@@ -66,7 +44,7 @@ export const getConsumptionStatsService = async (
   }
 
   for (const tx of transactions) {
-    const dateStr = format(tx.createdAt, 'yyyy-MM-dd');
+    const dateStr = formatZonedDate(tx.createdAt, 'yyyy-MM-dd', timezone);
     if (statsByDate.has(dateStr)) {
       const stats = statsByDate.get(dateStr)!;
       if (tx.type === 'income') {
@@ -74,7 +52,7 @@ export const getConsumptionStatsService = async (
       } else {
         stats.expense += tx.amount;
       }
-      stats.total = stats.income - stats.expense; // Net total or sum? Taking net as it's common for balance.
+      stats.total = stats.income - stats.expense;
     }
   }
 
