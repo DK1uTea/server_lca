@@ -14,6 +14,18 @@
  *         provider:
  *           type: string
  *           enum: [local, google]
+ *         dateOfBirth:
+ *           type: string
+ *           format: date
+ *         gender:
+ *           type: string
+ *           enum: [male, female]
+ *         description:
+ *           type: string
+ *         avatar:
+ *           type: string
+ *         timezone:
+ *           type: string
  *         createdAt:
  *           type: string
  *           format: date-time
