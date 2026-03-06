@@ -1,7 +1,8 @@
-import { get } from 'node:http';
-import { getTransactionsQuery } from '../../controllers/transaction/get-transactions.controller.js';
 import Transaction from '../../models/transaction.model.js';
+import User from '../../models/user.model.js';
 import { getPaginationObject } from '../../utils/resPagination.util.js';
+import { getZonedStartOfDay, getZonedEndOfDay } from '../../utils/date.util.js';
+import { getTransactionsQuery } from '../../controllers/transaction/get-transactions.controller.js';
 
 export const getTransactionsService = async (userID: string, query: getTransactionsQuery) => {
   const { page, limit, type, createdDate } = query;
@@ -13,13 +14,12 @@ export const getTransactionsService = async (userID: string, query: getTransacti
   }
 
   if (createdDate) {
-    const date = new Date(createdDate);
+    // Fetch user timezone
+    const user = await User.findById(userID).select('timezone').lean();
+    const timezone = user?.timezone || 'UTC';
 
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfDay = getZonedStartOfDay(createdDate, timezone);
+    const endOfDay = getZonedEndOfDay(createdDate, timezone);
 
     searchQuery.createdAt = {
       $gte: startOfDay,

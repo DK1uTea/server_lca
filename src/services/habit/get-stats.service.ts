@@ -1,14 +1,8 @@
 import mongoose from 'mongoose';
-import {
-  format,
-  startOfWeek,
-  startOfMonth,
-  addWeeks,
-  addMonths,
-  isSameDay
-} from 'date-fns';
-
 import Habit from '../../models/habit.model.js';
+import User from '../../models/user.model.js';
+import { getPeriodRange, formatZonedDate } from '../../utils/date.util.js';
+import { TZDate } from '@date-fns/tz';
 
 export type GetHabitStatsQuery = {
   period: 'weekly' | 'monthly'
@@ -19,30 +13,13 @@ export const getHabitStatsService = async (
   query: GetHabitStatsQuery
 ) => {
   const { period } = query;
+
+  // Fetch user timezone
+  const user = await User.findById(userID).select('timezone').lean();
+  const timezone = user?.timezone || 'UTC';
+
   const now = new Date();
-
-  let startDate: Date;
-  let endDate: Date;
-
-  switch (period) {
-    case 'weekly': {
-      startDate = startOfWeek(now, { weekStartsOn: 1 }); // Monday
-      endDate = addWeeks(startDate, 1);
-      break;
-    }
-
-    case 'monthly': {
-      startDate = startOfMonth(now);
-      endDate = addMonths(startDate, 1);
-      break;
-    }
-
-    default: {
-      startDate = startOfWeek(now, { weekStartsOn: 1 });
-      endDate = addWeeks(startDate, 1);
-      break;
-    }
-  }
+  const { startDate, endDate } = getPeriodRange(now, period, timezone);
 
   const habits = await Habit.find({
     userId: new mongoose.Types.ObjectId(userID)
@@ -54,9 +31,9 @@ export const getHabitStatsService = async (
   >();
 
   // Initialize the map with all dates in the range
-  let currentDate = new Date(startDate);
+  let currentDate = new TZDate(startDate, timezone);
   while (currentDate < endDate) {
-    const dateStr = format(currentDate, 'yyyy-MM-dd');
+    const dateStr = formatZonedDate(currentDate, 'yyyy-MM-dd', timezone);
     statsByDate.set(dateStr, {
       completed: 0,
       pending: 0,
@@ -67,7 +44,8 @@ export const getHabitStatsService = async (
 
   for (const habit of habits) {
     for (const completedDate of habit.completedDates) {
-      const dateStr = format(new Date(completedDate), 'yyyy-MM-dd');
+      // Treat completedDate as UTC and convert to user timezone for comparison
+      const dateStr = formatZonedDate(completedDate, 'yyyy-MM-dd', timezone);
       if (statsByDate.has(dateStr)) {
         const stats = statsByDate.get(dateStr)!;
         stats.completed += 1;

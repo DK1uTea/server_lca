@@ -1,18 +1,25 @@
-import { get } from 'node:http';
 import { GetTaskParams, GetTaskQuery } from '../../controllers/task/get-task.controller.js';
 import Task from '../../models/task.model.js';
+import User from '../../models/user.model.js';
 import { getPaginationObject } from '../../utils/resPagination.util.js';
+import { getZonedStartOfDay } from '../../utils/date.util.js';
 
 export const getTasksService = async (userID: string, query: GetTaskQuery) => {
   const { search, page, limit, sort, sortBy, priority, status } = query;
-  const currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
+
+  // Fetch user timezone for accurate overdue calculation
+  const user = await User.findById(userID).select('timezone').lean();
+  const timezone = user?.timezone || 'UTC';
+
+  const now = new Date();
+  const startOfToday = getZonedStartOfDay(now, timezone);
 
   // Update overdue tasks for this user before fetching
+  // A task is overdue if its dueDate is before the start of today in the user's timezone
   await Task.updateMany(
     {
       userId: userID,
-      dueDate: { $lt: currentDate },
+      dueDate: { $lt: startOfToday },
       status: 'pending'
     },
     { status: 'overdue' }

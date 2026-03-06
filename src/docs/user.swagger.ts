@@ -49,9 +49,32 @@
  *                 type: string
  *               avatar:
  *                 type: string
- *     responses:
+ *   responses:
  *       200:
  *         description: Profile updated successfully
+ *       401:
+ *         description: Unauthorized - Token required or invalid
+ *       404:
+ *         description: User not found
+ *
+ * /users/timezone:
+ *   patch:
+ *     summary: Update timezone for the authenticated user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - timezone
+ *             properties:
+ *               timezone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Timezone updated successfully
  *       401:
  *         description: Unauthorized - Token required or invalid
  *       404:
