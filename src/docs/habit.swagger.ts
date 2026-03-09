@@ -76,11 +76,16 @@
  *                             enum: [daily, weekly, monthly]
  *                           targetCount:
  *                             type: number
- *                           completedDates:
- *                             type: array
- *                             items:
- *                               type: string
- *                               format: date
+ *                           streak:
+ *                             type: object
+ *                             properties:
+ *                               current:
+ *                                 type: integer
+ *                               longest:
+ *                                 type: integer
+ *                               lastCompletedDate:
+ *                                 type: string
+ *                                 format: date
  *                           createdAt:
  *                             type: string
  *                             format: date-time
@@ -205,7 +210,7 @@
  * @swagger
  * /habits/{id}/complete:
  *   patch:
- *     summary: Mark a habit as completed for a specific date
+ *     summary: Mark a habit as completed for today
  *     tags: [Habits]
  *     parameters:
  *       - in: path
@@ -213,26 +218,41 @@
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - date
- *             properties:
- *               date:
- *                 type: string
- *                 format: date
- *                 example: "2024-05-20"
  *     responses:
  *       200:
  *         description: Habit updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     streak:
+ *                       type: object
+ *                       properties:
+ *                         current:
+ *                           type: integer
+ *                         longest:
+ *                           type: integer
+ *                         lastCompletedDate:
+ *                           type: string
+ *                           format: date
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  *       401:
  *         description: Unauthorized - Token required or invalid
  *       404:
  *         description: Habit not found
+ *       409:
+ *         description: Habit already completed for today
  */
 
 /**

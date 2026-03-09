@@ -6,7 +6,11 @@ export interface IHabit extends Document {
   description?: string;
   frequency: 'daily' | 'weekly' | 'monthly';
   targetCount: number;
-  completedDates: Date[];
+  streak: {
+    current: number;
+    longest: number;
+    lastCompletedDate: Date | null;
+  };
   createdAt: Date;
 }
 
@@ -35,9 +39,10 @@ const habitSchema: Schema = new Schema({
     type: Number,
     default: 1,
   },
-  completedDates: {
-    type: [Date],
-    default: [],
+  streak: {
+    current: { type: Number, default: 0 },
+    longest: { type: Number, default: 0 },
+    lastCompletedDate: { type: Date, default: null },
   },
   createdAt: {
     type: Date,
