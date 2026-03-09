@@ -7,6 +7,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'Drink at least 2 liters of water daily.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[1],
@@ -14,6 +15,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'Go for a 5km run.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[2],
@@ -21,6 +23,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'Read 20 pages of a book.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[3],
@@ -28,6 +31,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: '10 minutes of mindfulness.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[4],
@@ -35,6 +39,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'Solve one LeetCode problem.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[5],
@@ -42,6 +47,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'Write about your day.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[6],
@@ -49,6 +55,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: '30 minutes of yoga session.',
     frequency: 'weekly',
     targetCount: 3,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[7],
@@ -56,6 +63,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'Go cycling for an hour.',
     frequency: 'weekly',
     targetCount: 2,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[8],
@@ -63,6 +71,7 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: 'No junk food today.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
   {
     userId: userIds[9],
@@ -70,5 +79,6 @@ export const getHabitSeeds = (userIds: mongoose.Types.ObjectId[]) => [
     description: '15 minutes on Duolingo.',
     frequency: 'daily',
     targetCount: 1,
+    streak: { current: 0, longest: 0, lastCompletedDate: null }
   },
 ];

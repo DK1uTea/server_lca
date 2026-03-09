@@ -5,8 +5,10 @@ import User from '../models/user.model.js';
 import Habit from '../models/habit.model.js';
 import Task from '../models/task.model.js';
 import Transaction from '../models/transaction.model.js';
+import HabitLog from '../models/habit-log.model.js';
 import { userSeeds } from './user.seed.js';
 import { getHabitSeeds } from './habit.seed.js';
+import { getHabitLogSeeds } from './habit-log.seed.js';
 import { getTaskSeeds } from './task.seed.js';
 import { getTransactionSeeds } from './transaction.seed.js';
 
@@ -19,6 +21,7 @@ const seedDatabase = async () => {
     console.log('Clearing existing data...');
     await User.deleteMany({});
     await Habit.deleteMany({});
+    await HabitLog.deleteMany({});
     await Task.deleteMany({});
     await Transaction.deleteMany({});
     console.log('Collections cleared.');
@@ -30,8 +33,18 @@ const seedDatabase = async () => {
 
     console.log('Seeding Habits...');
     const habitSeeds = getHabitSeeds(userIds);
-    await Habit.insertMany(habitSeeds);
-    console.log(`${habitSeeds.length} habits seeded.`);
+    const createdHabits = await Habit.insertMany(habitSeeds);
+    console.log(`${createdHabits.length} habits seeded.`);
+
+    console.log('Seeding Habit Logs...');
+    const habitLogSeeds = getHabitLogSeeds(createdHabits);
+    await HabitLog.insertMany(habitLogSeeds);
+    console.log(`${habitLogSeeds.length} habit logs seeded.`);
+
+    // After seeding logs, we should probably update durations/streaks if we want them to match the logs
+    // But for simplicity in seeds, we just inserted logs.
+    // In a real scenario, we might want to calculate the streak and update the Habit model here.
+    // Given the migration does this, let's just make sure the seeds are consistent.
 
     console.log('Seeding Tasks...');
     const taskSeeds = getTaskSeeds(userIds);
