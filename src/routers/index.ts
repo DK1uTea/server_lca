@@ -4,6 +4,7 @@ import taskRouter from './task.router.js';
 import userRouter from './user.router.js';
 import transactionRouter from './transaction.router.js';
 import habitRouter from './habit.router.js';
+import notificationRouter from './notification.router.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -17,6 +18,7 @@ const privateRoutes = [
   { path: '/users', router: userRouter },
   { path: '/transactions', router: transactionRouter },
   { path: '/habits', router: habitRouter },
+  { path: '/notifications', router: notificationRouter },
 ];
 
 publicRoutes.forEach((route) => router.use(route.path, route.router));

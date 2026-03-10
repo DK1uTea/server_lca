@@ -2,6 +2,7 @@ import HabitLog from '../../models/habit-log.model.js';
 import Habit from '../../models/habit.model.js';
 import { getZonedStartOfDay } from '../../utils/date.util.js';
 import { updateHabitStreak } from './habit-streak.service.js';
+import { createNotification } from '../notification/notification.service.js';
 
 export const markHabitAsCompletedService = async (id: string, userId: string, timezone: string = 'UTC') => {
   const today = new Date();
@@ -23,6 +24,14 @@ export const markHabitAsCompletedService = async (id: string, userId: string, ti
 
   // Update streak logic
   await updateHabitStreak(id, timezone);
+
+  // Trigger notification
+  await createNotification({
+    userId,
+    title: "Habit completed",
+    message: `Great job completing your habit: ${habit.name}!`,
+    type: "habit"
+  });
 
   // Re-fetch habit to get updated streak in response
   const updatedHabit = await Habit.findById(id);
